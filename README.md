@@ -110,4 +110,6 @@ seit April 2026 nochmal ändert.
 | `collect_prices.py` | Stündlich (per Actions): Preise abfragen |
 | `analyze.py` | Nach 8 Wochen: Auswertung + Chart (eigene Live-Daten) |
 | `historical_to_hourly.py` | Sofort: Auswertung aus offiziellen historischen Rohdaten |
+| `cheapest_stations.py` | Günstigste/teuerste Tankstellen (Ranking) |
+| `stations_map.py` | Interaktive Karte aller Tankstellen (Preis als Zahl + Farbe) |
 | `.github/workflows/collect.yml` | Der Cronjob |
