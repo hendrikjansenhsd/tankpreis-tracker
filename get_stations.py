@@ -50,7 +50,7 @@ def main():
                 "lng": s["lng"],
                 "city_search": city,
             }
-        time.sleep(2)  # nicht direkt hintereinander, freundlich zum Server
+        time.sleep(65)  # Rate-Limit: max. 1 Request/Minute pro API-Key
 
     with open(STATIONS_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(

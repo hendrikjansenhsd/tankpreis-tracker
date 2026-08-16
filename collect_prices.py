@@ -8,6 +8,7 @@ Benoetigt Umgebungsvariable TANKERKOENIG_API_KEY.
 """
 import csv
 import os
+import time
 from datetime import datetime, timezone
 
 import requests
@@ -17,6 +18,7 @@ from config import FUEL_TYPE, PRICES_FILE, STATIONS_FILE
 API_KEY = os.environ["TANKERKOENIG_API_KEY"]
 PRICES_URL = "https://creativecommons.tankerkoenig.de/json/prices.php"
 BATCH_SIZE = 10  # API erlaubt max. 10 IDs pro Anfrage
+SECONDS_BETWEEN_REQUESTS = 65  # Rate-Limit: max. 1 Request/Minute pro API-Key
 
 
 def load_station_ids():
@@ -49,7 +51,8 @@ def main():
         if not file_exists:
             writer.writerow(["timestamp_utc", "station_id", "fuel_type", "price", "status"])
 
-        for batch in chunks(station_ids, BATCH_SIZE):
+        batches = list(chunks(station_ids, BATCH_SIZE))
+        for i, batch in enumerate(batches):
             prices = fetch_prices(batch)
             for station_id, info in prices.items():
                 if not info.get("status") == "open":
@@ -57,6 +60,9 @@ def main():
                     continue
                 price = info.get(FUEL_TYPE)
                 writer.writerow([timestamp, station_id, FUEL_TYPE, price, "open"])
+            f.flush()
+            if i < len(batches) - 1:
+                time.sleep(SECONDS_BETWEEN_REQUESTS)
 
     print(f"{timestamp}: Preise fuer {len(station_ids)} Tankstellen gespeichert.")
 
